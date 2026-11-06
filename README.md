@@ -4,7 +4,7 @@ Sistema de controle de estoque para uso em intranet. O objetivo é permitir o ca
 
 ## Tecnologias atuais
 
-- .NET 9 / ASP.NET Core
+- .NET 10 LTS / ASP.NET Core
 - Blazor Server para a interface web
 - Entity Framework Core com SQL Server
 
@@ -38,7 +38,7 @@ O projeto existente foi mantido em .NET, em vez de migrado para a arquitetura Re
 
 ## Executar localmente
 
-Requer o .NET 9 SDK e uma instância do SQL Server instalada, em execução e acessível. A connection string padrão aponta para a instância padrão em `localhost`, usando autenticação integrada do Windows. Se o SQL Server estiver em outro host ou usar uma instância nomeada (por exemplo, `localhost\SQLEXPRESS`), configure a connection string apropriada.
+Requer o .NET 10 SDK e uma instância do SQL Server instalada, em execução e acessível. A connection string padrão aponta para a instância padrão em `localhost`, usando autenticação integrada do Windows. Se o SQL Server estiver em outro host ou usar uma instância nomeada (por exemplo, `localhost\SQLEXPRESS`), configure a connection string apropriada.
 
 No desenvolvimento local, `appsettings.Development.json` confia no certificado TLS do SQL Server local. Em outros ambientes, a configuração padrão valida o certificado. Para apontar para outra instância, defina `ConnectionStrings__DefaultConnection` como variável de ambiente. Exemplo para a sessão atual do PowerShell:
 
@@ -62,10 +62,10 @@ As URLs locais dos perfis de desenvolvimento estão definidas em `Properties/lau
 
 ## Migrations do banco
 
-As migrations do Entity Framework Core ficam em `EstoqueIntranet.Api/Data/Migrations`. A API aplica migrations pendentes ao iniciar. Para criar uma migration após alterar o modelo, instale a ferramenta EF Core 9 se necessário e execute na raiz da solução:
+As migrations do Entity Framework Core ficam em `EstoqueIntranet.Api/Data/Migrations`. A API aplica migrations pendentes ao iniciar. Para criar uma migration após alterar o modelo, instale a ferramenta EF Core 10 se necessário e execute na raiz da solução:
 
 ```powershell
-dotnet tool install --global dotnet-ef --version 9.0.9
+dotnet tool install --global dotnet-ef --version 10.0.14
 dotnet ef migrations add NomeDaMigration --project .\EstoqueIntranet.Api --startup-project .\EstoqueIntranet.Api --output-dir Data\Migrations
 ```
 
