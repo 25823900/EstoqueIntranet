@@ -1,4 +1,5 @@
 using EstoqueIntranet.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EstoqueIntranet.Api.Data;
 
@@ -6,7 +7,7 @@ public static class DbInitializer
 {
     public static void Seed(AppDbContext context)
     {
-        context.Database.EnsureCreated();
+        context.Database.Migrate();
 
         if (context.UnidadesMedida.Any())
         {

@@ -6,7 +6,7 @@ Sistema de controle de estoque para uso em intranet. O objetivo é permitir o ca
 
 - .NET 9 / ASP.NET Core
 - Blazor Server para a interface web
-- Entity Framework Core com SQLite
+- Entity Framework Core com SQL Server
 
 O projeto existente foi mantido em .NET, em vez de migrado para a arquitetura React, FastAPI e PostgreSQL que apareceu como sugestão nos requisitos iniciais.
 
@@ -20,7 +20,7 @@ O projeto existente foi mantido em .NET, em vez de migrado para a arquitetura Re
 
 - Modelos para produtos, unidades de medida, localizações, usuários, movimentações e QR Codes.
 - Configuração das relações e índices principais do banco em `AppDbContext`.
-- Inicialização do SQLite e carga de unidades, localização, usuários, produtos e QR Codes de exemplo em `DbInitializer`.
+- Migração do esquema do banco com Entity Framework Core e carga de unidades, localização, usuários, produtos e QR Codes de exemplo em `DbInitializer`.
 - Endpoint `GET /api/health`.
 - Endpoint `GET /api/produtos` para listar produtos com unidade e localização.
 - Endpoint `GET /api/produtos/{codigo}` para consultar um produto por código.
@@ -38,7 +38,17 @@ O projeto existente foi mantido em .NET, em vez de migrado para a arquitetura Re
 
 ## Executar localmente
 
-Requer o .NET 9 SDK. Execute cada projeto em um terminal separado, a partir da raiz da solução:
+Requer o .NET 9 SDK e uma instância do SQL Server instalada, em execução e acessível. A connection string padrão aponta para a instância padrão em `localhost`, usando autenticação integrada do Windows. Se o SQL Server estiver em outro host ou usar uma instância nomeada (por exemplo, `localhost\SQLEXPRESS`), configure a connection string apropriada.
+
+No desenvolvimento local, `appsettings.Development.json` confia no certificado TLS do SQL Server local. Em outros ambientes, a configuração padrão valida o certificado. Para apontar para outra instância, defina `ConnectionStrings__DefaultConnection` como variável de ambiente. Exemplo para a sessão atual do PowerShell:
+
+```powershell
+$env:ConnectionStrings__DefaultConnection = "Server=localhost\SQLEXPRESS;Database=EstoqueIntranet;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true"
+```
+
+Não armazene senhas ou outros segredos em arquivos versionados. A identidade usada pela aplicação precisa ter permissão para criar o banco na primeira execução e para aplicar alterações de esquema.
+
+Execute cada projeto em um terminal separado, a partir da raiz da solução:
 
 ```powershell
 dotnet run --project .\EstoqueIntranet.Api
@@ -48,11 +58,24 @@ dotnet run --project .\EstoqueIntranet.Api
 dotnet run --project .\EstoqueIntranet.Web
 ```
 
-As URLs locais dos perfis de desenvolvimento estão definidas em `Properties/launchSettings.json` de cada projeto. A API cria o banco SQLite e carrega dados de demonstração na primeira execução.
+As URLs locais dos perfis de desenvolvimento estão definidas em `Properties/launchSettings.json` de cada projeto. Na inicialização, a API aplica as migrations pendentes e carrega os dados de demonstração se as unidades de medida ainda não existirem.
 
-## Dados locais
+## Migrations do banco
 
-O banco SQLite e seus arquivos auxiliares (`estoque.db`, `estoque.db-shm` e `estoque.db-wal`), além de `bin/`, `obj/` e arquivos de usuário do Visual Studio, são ignorados pelo Git. O banco contém dados locais/de demonstração e não deve ser publicado.
+As migrations do Entity Framework Core ficam em `EstoqueIntranet.Api/Data/Migrations`. A API aplica migrations pendentes ao iniciar. Para criar uma migration após alterar o modelo, instale a ferramenta EF Core 9 se necessário e execute na raiz da solução:
+
+```powershell
+dotnet tool install --global dotnet-ef --version 9.0.9
+dotnet ef migrations add NomeDaMigration --project .\EstoqueIntranet.Api --startup-project .\EstoqueIntranet.Api --output-dir Data\Migrations
+```
+
+O comando de instalação é necessário apenas uma vez por ambiente. Revise e versione os arquivos de migration gerados.
+
+## Banco de dados
+
+O sistema usa SQL Server e não mantém suporte a SQLite. Os arquivos locais do banco SQLite anterior foram removidos; os dados daquele arquivo não foram migrados. As migrations criam o esquema no SQL Server, mas não importam dados de outros bancos.
+
+Os diretórios `bin/`, `obj/` e arquivos de usuário do Visual Studio são ignorados pelo Git.
 
 ## Próximo passo recomendado
 
