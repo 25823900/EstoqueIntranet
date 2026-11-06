@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+**/estoque.db
+**/estoque.db-shm
+**/estoque.db-wal
+.vs/
+.vscode/
+*.user
+*.suo
