@@ -1,6 +1,6 @@
 # EstoqueIntranet
 
-Sistema de controle de estoque para uso em intranet. O objetivo é permitir o cadastro de produtos e unidades de medida, acompanhar movimentações e, futuramente, identificar itens por QR Code em computadores, celulares e coletores Zebra.
+Sistema de controle de estoque para uso em intranet. O sistema deverá permitir o cadastro de produtos e unidades de medida, acompanhar movimentações e identificar itens por QR Code em computadores, celulares e coletores Zebra. A leitura de QR Code e a baixa de estoque fazem parte dos requisitos funcionais do sistema.
 
 ## Tecnologias atuais
 
@@ -9,6 +9,18 @@ Sistema de controle de estoque para uso em intranet. O objetivo é permitir o ca
 - Entity Framework Core com SQL Server
 
 O projeto existente foi mantido em .NET, em vez de migrado para a arquitetura React, FastAPI e PostgreSQL que apareceu como sugestão nos requisitos iniciais.
+
+## Requisito de QR Code e dispositivos
+
+A leitura de QR Code faz parte do fluxo principal do sistema e deve ser considerada em todas as etapas do projeto. O desenho prevê:
+
+- QR Codes associados a identificadores estáveis de produtos e, quando aplicável, de pallets; o saldo não será gravado no QR Code.
+- Uma tela web responsiva para localizar o item, escolher a movimentação e informar a quantidade.
+- Suporte a leitores Zebra que enviem o código como entrada de teclado e a leitura pela câmera do celular, conforme compatibilidade do navegador e do dispositivo.
+- Consulta do item pela API e registro da movimentação no servidor, com validação e atualização transacional do saldo.
+- Testes reais em computador, celular e no modelo de coletor Zebra disponível antes da implantação.
+
+Assim, QR Code não é um módulo opcional para depois: cadastro, API, interface e movimentações devem ser implementados de forma compatível com esse fluxo.
 
 ## Estrutura
 
@@ -31,7 +43,8 @@ O projeto existente foi mantido em .NET, em vez de migrado para a arquitetura Re
 - Operações de cadastro e edição de produtos e unidades.
 - Movimentações funcionais de entrada, saída e ajuste, com validação de saldo e atualização atômica.
 - Autenticação, autorização e identificação do usuário em cada movimentação.
-- Cadastro e controle de pallets, geração/impressão de QR Codes e fluxo de leitura.
+- Cadastro e controle de pallets, geração/impressão de QR Codes e leitura integrada ao fluxo de movimentação.
+- Integração e testes da leitura por câmera em celulares e por coletor Zebra; o comportamento final deve ser validado no modelo e navegador utilizados pela empresa.
 - Interface de estoque responsiva, dashboard e relatórios.
 - Importação e validação dos dados da planilha de inventário.
 - Configuração e testes de implantação na intranet, backup e acesso seguro.
@@ -79,4 +92,4 @@ Os diretórios `bin/`, `obj/` e arquivos de usuário do Visual Studio são ignor
 
 ## Próximo passo recomendado
 
-Implementar na API o fluxo de movimentação de estoque (entrada, saída e ajuste), validando quantidade e saldo e registrando cada operação junto com a atualização do produto. Depois, conectar a interface web e acrescentar o fluxo de QR Code.
+Implementar o fluxo integrado de movimentação: API para entrada, saída e ajuste com validação e atualização transacional do saldo, mais uma tela web responsiva que aceite leitura do identificador QR e funcione com câmera de celular e leitor Zebra. A geração/impressão dos códigos e a validação nos dispositivos fazem parte dessa entrega.
